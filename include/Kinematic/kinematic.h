@@ -15,8 +15,9 @@ private:
 	// cutting the rest out
 	Eigen::Matrix4f matrixExp(Eigen::Matrix4f epsilon, double theta, int precision = 5);
 
-	// Recalulcation from eigen Matrix to mat34
-	Mat34 eigen2mat34(Eigen::Matrix4f trans);
+	// Recalulcation from eigen Matrix to mat34 and from mat34 to eigen
+	Mat34 eigen_2_mat34(Eigen::Matrix4f trans);
+	Eigen::Matrix4f mat34_2_eigen(Mat34 trans);
 
 	// Returns the vec^
 	Eigen::Matrix4f getDash(Eigen::Vector3f vec);

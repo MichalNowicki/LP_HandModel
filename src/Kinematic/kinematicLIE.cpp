@@ -22,7 +22,7 @@ Eigen::Matrix4f ForwardKinematics::matrixExp(Eigen::Matrix4f epsilon, double the
 	return result;
 }
 
-Mat34 ForwardKinematics::eigen2mat34(Eigen::Matrix4f trans)
+Mat34 ForwardKinematics::eigen_2_mat34(Eigen::Matrix4f trans)
 {
 	Mat34 pose;
 	for (int i=0;i<3;i++)
@@ -35,6 +35,22 @@ Mat34 ForwardKinematics::eigen2mat34(Eigen::Matrix4f trans)
 	}
 	return pose;
 }
+
+Eigen::Matrix4f ForwardKinematics::mat34_2_eigen(Mat34 trans)
+{
+	Eigen::Matrix4f pose;
+	pose.setIdentity();
+	for (int i=0;i<3;i++)
+	{
+		for (int j=0;j<3;j++)
+		{
+			pose(i,j) = trans.R.m[i][j];
+		}
+		pose(i,3) = trans.p.v[i];
+	}
+	return pose;
+}
+
 
 Eigen::Matrix4f ForwardKinematics::getDash(Eigen::Vector3f vec)
 {
@@ -82,12 +98,12 @@ void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config, flo
 
 	for (int i=0;i<Finger::LINKS;i++)
 	{
-		Eigen::Matrix4f pose = zeroPos;
+		Eigen::Matrix4f trans = zeroPos * mat34_2_eigen(finger.pose);
 		for (int j=i+1;j>=0;j--)
 		{
-			pose = matrixExp(eps[j], config.conf[j]) * pose;
+			trans = matrixExp(eps[j], config.conf[j]) * trans;
 		}
-		finger.chain[i].pose = eigen2mat34(pose);
+		finger.chain[i].pose = eigen_2_mat34(trans);
 	}
 }
 
