@@ -29,7 +29,9 @@ class CVector
         void crossVector(CVector vect);
 		/// dot product
         float dotProduct(CVector vect);
-        /// equal within an error ‘e’
+        /// get dash
+
+        /// equal within an error ï¿½eï¿½
         inline const bool nearlyEquals( const CVector& v, const float e ) const {
             return ((fabs(x-v.x)<e) && (fabs(y-v.y)<e) && (fabs(z-v.z)<e));
         }

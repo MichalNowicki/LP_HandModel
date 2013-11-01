@@ -1,8 +1,9 @@
 #include "../include/Kinematic/kinematic.h"
+#include "../include/Core/Math/CMat44.h"
 
-CMat44 ForwardKinematics::matrixExp(CMat44 epsilon, float_t theta, int precision)
+Eigen::Matrix4f ForwardKinematics::matrixExp(Eigen::Matrix4f epsilon, double theta, int precision)
 {
-	CMat44 result, cumulative;
+	Eigen::Matrix4f result, cumulative;
 	result.setIdentity();
 	cumulative.setIdentity();
 
@@ -21,27 +22,80 @@ CMat44 ForwardKinematics::matrixExp(CMat44 epsilon, float_t theta, int precision
 	return result;
 }
 
-
-void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config)
+Mat34 ForwardKinematics::eigen2mat34(Eigen::Matrix4f trans)
 {
-	float l1 = 1, l2 = 1, l3 = 1;
-	CMat44 zeroPos;
-	zeroPos.setIdentity();
-	zeroPos.pos[2] = l1 + l2 + l3;
+	Mat34 pose;
+	for (int i=0;i<3;i++)
+	{
+		for (int j=0;j<3;j++)
+		{
+			pose.R.m[i][j] = trans(i,j);
+		}
+		pose.p.v[i] = trans(i,3);
+	}
+	return pose;
+}
 
-	CMat44 eps;
+Eigen::Matrix4f ForwardKinematics::getDash(Eigen::Vector3f vec)
+{
+	Eigen::Matrix4f res;
+	res.setZero();
+	res(0,0) = 0;
+	res(0,1) = - vec[2];
+	res(0,2) = vec[1];
+	res(1,0) = vec[2];
+	res(1,1) = 0;
+	res(1,2) = - vec[0];
+	res(2,0) = - vec[1];
+	res(2,1) = vec[0];
+	res(2,2) = 0;
+	return res;
+}
+
+Eigen::Matrix4f ForwardKinematics::getEpsilon(Eigen::Vector3f omega, Eigen::Vector3f q)
+{
+	Eigen::Matrix4f eps = getDash( omega );
+	omega = - omega.cross( q );
+	eps(0,3) = omega[0];
+	eps(1,3) = omega[1];
+	eps(2,3) = omega[2];
+	return eps;
+}
+
+void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config, float *length)
+{
+	// Matrix with joints equal zero
+	Eigen::Matrix4f zeroPos;
+	zeroPos.setIdentity();
+	zeroPos(2,3) = length[0] + length[1] + length[2];
+
+	// first joint
+	// w_1 = (0, 1, 0) 		q_1 = (0,0,0);
+	// w_2 = (1, 0, 0)		q_2 = (0,0,0);
+	// w_3 = (0, 1, 0)		q_3 = (0,0,l1);
+	// w_4 = (0, 1, 0)		q_4 = (0,0,l1+l2);
+	Eigen::Matrix4f eps[4];
+	eps[0] = getEpsilon(Eigen::Vector3f::UnitY() , Eigen::Vector3f(0,0,0) );
+	eps[1] = getEpsilon(Eigen::Vector3f::UnitX() , Eigen::Vector3f(0,0,0) );
+	eps[2] = getEpsilon(Eigen::Vector3f::UnitY() , Eigen::Vector3f(0,0,length[0]) );
+	eps[3] = getEpsilon(Eigen::Vector3f::UnitY() , Eigen::Vector3f(0,0,length[0] + length[1]) );
+
 	for (int i=0;i<Finger::LINKS;i++)
 	{
-		if ( i == 0)
+		Eigen::Matrix4f pose = zeroPos;
+		for (int j=i+1;j>=0;j--)
 		{
-
-			finger.chain[i].pose = matrixExp(eps, config.conf[0]);
+			pose = matrixExp(eps[j], config.conf[j]) * pose;
 		}
+		finger.chain[i].pose = eigen2mat34(pose);
 	}
 }
 
 void ForwardKinematics::handFK(Hand::Pose hand, Hand::Config config)
 {
+	/// temporal assumption
+	float length[3] = {1.0, 1.0, 1.0};
+
 	for (int i=0; i< Hand::FINGERS; i++)
 	{
 		Finger::Config fingerConfig;
@@ -50,8 +104,6 @@ void ForwardKinematics::handFK(Hand::Pose hand, Hand::Config config)
 			fingerConfig.conf[j] = config.conf[i*5 + j];
 		}
 
-		fingerFK( hand.fingers[i], fingerConfig ) ;
+		fingerFK( hand.fingers[i], fingerConfig, length ) ;
 	}
-
-
 }
