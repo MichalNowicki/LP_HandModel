@@ -44,6 +44,7 @@ class CMat44
     virtual ~CMat44();
     /// multiplication
     CMat44 operator* (CMat44 param);
+    CMat44 operator* (float param);
 	/// addition
     CMat44 operator+ (CMat44 param);
 	/// subtraction

@@ -40,6 +40,18 @@ CMat44 CMat44::operator* (CMat44 param) {
   return (temp);
 }
 
+CMat44 CMat44::operator* (float param) {
+	for (int i=0;i<9;i++)
+	{
+		this->rotation[i] *= param;
+	}
+	for (int j=0;j<3;j++)
+	{
+		this->pos[j] *= param;
+	}
+}
+
+
 ///addition
 CMat44 CMat44::operator+ (CMat44 param) {
   CMat44 temp;

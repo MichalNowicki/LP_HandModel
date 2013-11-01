@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <vector>
+#include "Core/Math/CMat44.h"
 
 /// handest name space
 namespace handest {
@@ -105,7 +106,7 @@ namespace handest {
     class Link {
         public:
             /// Pose
-            Mat34 pose;
+            CMat44 pose;
             /// Point cloud
             Point3D::Cloud surface;
 
@@ -139,7 +140,7 @@ namespace handest {
                 public:
 
                     /// 3D pose of the base
-                    Mat34 pose;
+                    CMat44 pose;
                     /// Configuration
                     Config config;
                     /// Shape representation
@@ -189,7 +190,7 @@ namespace handest {
                     /// Configuration
                     Config config;
                     /// 3D pose of the base
-                    Mat34 pose;
+                    CMat44 pose;
                     /// Palm
                     Link palm;
                     /// Fingers
