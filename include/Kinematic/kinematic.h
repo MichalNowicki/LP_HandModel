@@ -7,8 +7,7 @@
 using namespace handest;
 
 class ForwardKinematics {
-//private:
-public:
+//public:
 	// Implements the matrix exponential based on epsilon and theta:
 	// e ^ (eps*theta) = I + eps*theta + eps*theta/2! + ...
 	// precision informs about the number of "eps*theta" elements that are used in calculation before
@@ -30,10 +29,10 @@ public:
 
 public:
 	/// Recalculates "pose" matrices based on the values of joints in config
-	void fingerFK(Finger::Pose &finger, Finger::Config config, float *lengths);
+	void fingerFK(Finger::Pose *finger, Finger::Config config, float *lengths);
 
 	/// Recalculates "pose" matrices of whole hand based on the config
-	void handFK(Hand::Pose &hand, Hand::Config config);
+	void handFK(Hand::Pose *hand, Hand::Config config);
 };
 
 #endif

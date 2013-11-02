@@ -42,7 +42,26 @@ int main()
 		return 1;
 	}
 
-	Finger::Pose finger;
+
+	/// Testing scenarios for FK
+	Finger::Pose *finger;
+	finger = new Finger::Pose();
+	Mat33 z;
+	z.m[0][0] = z.m[1][1] = z.m[2][2] = 1.0;
+	finger->pose.R = z;
+	Vec3 g;
+	finger->pose.p = g;
+	finger->pose.p.v[2] = 10.0;
+
+	for (int i=0;i<3;i++)
+	{
+		for (int j=0;j<3;j++)
+		{
+			printf("%f ", finger->pose.R.m[i][j]);
+		}
+		printf("%f ", finger->pose.p.v[i]);
+		printf("\n");
+	}
 
 	ForwardKinematics *fk;
 	fk = new ForwardKinematics();
@@ -57,7 +76,7 @@ int main()
 
 	for (int i=0;i<3;i++)
 	{
-		printf("%f %f %f \n", finger.chain[i].pose.p.v[0], finger.chain[i].pose.p.v[1], finger.chain[i].pose.p.v[2]);
+		printf("%f %f %f \n", finger->chain[i].pose.p.v[0], finger->chain[i].pose.p.v[1], finger->chain[i].pose.p.v[2]);
 	}
 
 	//std::cout<<std::endl<<fk->getEpsilon(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0, 0, 0))<<std::endl;
