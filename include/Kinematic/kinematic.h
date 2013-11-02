@@ -6,14 +6,14 @@
 
 using namespace handest;
 
-class ForwardKinematics
-{
+class ForwardKinematics {
 private:
 	// Implements the matrix exponential based on epsilon and theta:
 	// e ^ (eps*theta) = I + eps*theta + eps*theta/2! + ...
 	// precision informs about the number of "eps*theta" elements that are used in calculation before
 	// cutting the rest out
-	Eigen::Matrix4f matrixExp(Eigen::Matrix4f epsilon, double theta, int precision = 5);
+	Eigen::Matrix4f matrixExp(Eigen::Matrix4f epsilon, double theta,
+			int precision = 5);
 
 	// Recalulcation from eigen Matrix to mat34 and from mat34 to eigen
 	Mat34 eigen_2_mat34(Eigen::Matrix4f trans);
