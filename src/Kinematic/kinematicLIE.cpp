@@ -83,7 +83,6 @@ void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config, flo
 	// Matrix with joints equal zero
 	Eigen::Matrix4f zeroPos;
 	zeroPos.setIdentity();
-	zeroPos(2,3) = length[0] + length[1] + length[2];
 
 	// first joint
 	// w_1 = (0, 1, 0) 		q_1 = (0,0,0);
@@ -98,6 +97,8 @@ void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config, flo
 
 	for (int i=0;i<Finger::LINKS;i++)
 	{
+		zeroPos(2,3) += length[i];
+
 		Eigen::Matrix4f trans = zeroPos * mat34_2_eigen(finger.pose);
 		for (int j=i+1;j>=0;j--)
 		{
