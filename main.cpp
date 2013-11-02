@@ -2,6 +2,7 @@
 #include "handest_defs.h"
 #include "Grabber/kinect_grabber.h"
 #include "Core/Math/CMat44.h"
+#include "Kinematic/kinematic.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -30,15 +31,40 @@ int main()
         //optimization->save2File(hand);
         //visualizer->showHand(hand);
 
-        CMat44 matrix1;
-        matrix1.createTRMatrix(0, M_PI/2, 0, 0.1, 0.2, 0.3);
-        matrix1.showMatrix();
-        matrix1.inv(&matrix1);
-        matrix1.showMatrix();
+      //  CMat44 matrix1;
+      //  matrix1.createTRMatrix(0, M_PI/2, 0, 0.1, 0.2, 0.3);
+      ///  matrix1.showMatrix();
+       // matrix1.inv(&matrix1);
+      //  matrix1.showMatrix();
     }
 	catch (const std::exception& ex) {
 		std::cerr << ex.what() << std::endl;
 		return 1;
 	}
-    return 0;
+
+	Finger::Pose finger;
+
+	ForwardKinematics *fk;
+	fk = new ForwardKinematics();
+
+	Finger::Config config;
+	config.conf[0] = 0;
+	config.conf[1] = 0;
+	config.conf[2] = 0;
+	config.conf[3] = 45 * 3.14/180;
+	float len[3] = {1, 2, 3 };
+	fk->fingerFK(finger,config,len);
+
+	for (int i=0;i<3;i++)
+	{
+		printf("%f %f %f \n", finger.chain[i].pose.p.v[0], finger.chain[i].pose.p.v[1], finger.chain[i].pose.p.v[2]);
+	}
+
+	//std::cout<<std::endl<<fk->getEpsilon(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0, 0, 0))<<std::endl;
+
+	//Eigen::Matrix4f x = fk->matrixExp(fk->getEpsilon(Eigen::Vector3f::UnitZ(), Eigen::Vector3f(0, 0, 0)), config.conf[0], 15);
+
+	//std::cout<<std::endl<<x<<std::endl;
+
+	return 0;
 }

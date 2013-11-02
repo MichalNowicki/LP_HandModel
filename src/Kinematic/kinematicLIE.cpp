@@ -7,13 +7,9 @@ Eigen::Matrix4f ForwardKinematics::matrixExp(Eigen::Matrix4f epsilon,
 	result.setIdentity();
 	cumulative.setIdentity();
 
-	float factorial = 1;
 	for (int j = 0; j < precision; j++) {
 		// (epsilon * theta) ^ j
-		cumulative = cumulative * epsilon * (theta / factorial);
-
-		// Next iteration is (j+2)!
-		factorial *= (j + 2);
+		cumulative = cumulative * epsilon * (theta / (j+1));
 
 		// adding (epsilon * theta) ^ j  to result
 		result = result + cumulative;
@@ -69,7 +65,7 @@ Eigen::Matrix4f ForwardKinematics::getEpsilon(Eigen::Vector3f omega,
 	return eps;
 }
 
-void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config,
+void ForwardKinematics::fingerFK(Finger::Pose &finger, Finger::Config config,
 		float *length) {
 	// Matrix with joints equal zero
 	Eigen::Matrix4f zeroPos;
@@ -91,7 +87,7 @@ void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config,
 	for (int i = 0; i < Finger::LINKS; i++) {
 		zeroPos(2, 3) += length[i];
 
-		Eigen::Matrix4f trans = zeroPos * mat34_2_eigen(finger.pose);
+		Eigen::Matrix4f trans = zeroPos ;//* mat34_2_eigen(finger.pose);
 		for (int j = i + 1; j >= 0; j--) {
 			trans = matrixExp(eps[j], config.conf[j]) * trans;
 		}
@@ -99,7 +95,7 @@ void ForwardKinematics::fingerFK(Finger::Pose finger, Finger::Config config,
 	}
 }
 
-void ForwardKinematics::handFK(Hand::Pose hand, Hand::Config config) {
+void ForwardKinematics::handFK(Hand::Pose &hand, Hand::Config config) {
 	/// temporal assumption
 	float length[3] = { 1.0, 1.0, 1.0 };
 
