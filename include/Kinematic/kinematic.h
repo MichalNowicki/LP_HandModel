@@ -2,7 +2,7 @@
 #define _fk
 
 #include "../handest_defs.h"
-#include <Eigen/Eigen>
+#include "../../dependencies/Eigen/Eigen"
 
 using namespace handest;
 
@@ -13,7 +13,7 @@ class ForwardKinematics {
 	// precision informs about the number of "eps*theta" elements that are used in calculation before
 	// cutting the rest out
 	Eigen::Matrix4f matrixExp(Eigen::Matrix4f epsilon, double theta,
-			int precision = 5);
+			int precision = 10);
 
 	// Recalulcation from eigen Matrix to mat34 and from mat34 to eigen
 	Mat34 eigen_2_mat34(Eigen::Matrix4f trans);
@@ -33,6 +33,9 @@ public:
 
 	/// Recalculates "pose" matrices of whole hand based on the config
 	void handFK(Hand::Pose *hand, Hand::Config config);
+
+
+	// Forward(Hand::Pose& pose, Hand::Config &config);
 };
 
 #endif

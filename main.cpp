@@ -51,7 +51,7 @@ int main()
 	finger->pose.R = z;
 	Vec3 g;
 	finger->pose.p = g;
-	finger->pose.p.v[2] = 10.0;
+	finger->pose.p.v[2] = 0.0;//10.0;
 
 	for (int i=0;i<3;i++)
 	{
@@ -69,9 +69,9 @@ int main()
 	Finger::Config config;
 	config.conf[0] = 0;
 	config.conf[1] = 0;
-	config.conf[2] = 0;
-	config.conf[3] = 45 * 3.14/180;
-	float len[3] = {1, 2, 3 };
+	config.conf[2] = -45 * 3.14/180;
+	config.conf[3] = 90 * 3.14/180;
+	float len[3] = {1, 2, 2 };
 	fk->fingerFK(finger,config,len);
 
 	for (int i=0;i<3;i++)

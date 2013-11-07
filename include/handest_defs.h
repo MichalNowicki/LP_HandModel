@@ -108,6 +108,8 @@ namespace handest {
             Mat34 pose;
             /// Point cloud
             Point3D::Cloud surface;
+            /// Length
+            float_t length;
 
             /// Default constructor
             inline Link() {
