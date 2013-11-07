@@ -1,6 +1,6 @@
 # cmake requirements
 cmake_minimum_required(VERSION 2.8)
-SET(CMAKE_CXX_FLAGS "-std=c++0x")
+SET(CMAKE_CXX_FLAGS "-std=c++11")
 
 # Estimator of Hand Configuration
 PROJECT(HandEstimator)
